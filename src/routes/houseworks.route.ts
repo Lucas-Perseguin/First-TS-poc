@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   createHousework,
   getHouseworks,
+  getResidentHouseworks,
 } from '../controllers/houseworks.controller.js';
 import checkResidentActivity from '../middlewares/checkResidentActivity.middleware.js';
 import modelValidation from '../middlewares/validateModel.middleware.js';
@@ -18,7 +19,7 @@ router.post(
 
 router.get('/houseworks', getHouseworks);
 
-router.get('/houserworks/:residentId');
+router.get('/houseworks/:residentId', getResidentHouseworks);
 
 router.patch('/houseworks/:houseworkId');
 

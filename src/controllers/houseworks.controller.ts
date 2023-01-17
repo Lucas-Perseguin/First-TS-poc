@@ -3,12 +3,19 @@ import { HouseworkEntity } from '../protocols/houseworks.protocol.js';
 import {
   insertHousework,
   selectAllHouseworks,
-  selectdeliveredLateHouseworks,
+  selectAllResidentHouseworks,
+  selectDeliveredLateHouseworks,
   selectHouseworkById,
   selectHouseworksByDate,
   selectHouseworksByName,
   selectHouseworskByDone,
   selectLateHouseworks,
+  selectResidentDeliveredLateHouseworks,
+  selectResidentHouseworksByDate,
+  selectResidentHouseworksByName,
+  selectResidentHouseworskByDone,
+  selectResidentLateHouseworks,
+  selectResidentTodayHouseworks,
   selectTodayHouseworks,
 } from '../repositories/houseworks.repository.js';
 
@@ -58,10 +65,63 @@ export async function getHouseworks(
       const houseworks = await selectTodayHouseworks();
       return res.send(houseworks.rows);
     } else if (deliveredLate) {
-      const houserworks = await selectdeliveredLateHouseworks();
+      const houserworks = await selectDeliveredLateHouseworks();
       return res.send(houserworks.rows);
     } else {
       const houserworks = await selectAllHouseworks();
+      return res.send(houserworks.rows);
+    }
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+}
+
+export async function getResidentHouseworks(
+  req: Request,
+  res: Response
+): Promise<Response<HouseworkEntity | HouseworkEntity[]>> {
+  const { residentId } = req.params;
+  const { name, date, done, deliveredLate, isLate, today } = req.query;
+  let count: number = 0;
+  for (const key in req.query) {
+    count++;
+  }
+  if (count >= 2)
+    return res.status(400).send('You can only use one query string at a time');
+  try {
+    if (name) {
+      const houseworks = await selectResidentHouseworksByName(
+        name,
+        Number(residentId)
+      );
+      return res.send(houseworks.rows);
+    } else if (date) {
+      const houseworks = await selectResidentHouseworksByDate(
+        date,
+        Number(residentId)
+      );
+      return res.send(houseworks.rows);
+    } else if (done) {
+      const houseworks = await selectResidentHouseworskByDone(
+        done,
+        Number(residentId)
+      );
+      return res.send(houseworks.rows);
+    } else if (isLate) {
+      const houseworks = await selectResidentLateHouseworks(Number(residentId));
+      return res.send(houseworks.rows);
+    } else if (today) {
+      const houseworks = await selectResidentTodayHouseworks(
+        Number(residentId)
+      );
+      return res.send(houseworks.rows);
+    } else if (deliveredLate) {
+      const houserworks = await selectResidentDeliveredLateHouseworks(
+        Number(residentId)
+      );
+      return res.send(houserworks.rows);
+    } else {
+      const houserworks = await selectAllResidentHouseworks(Number(residentId));
       return res.send(houserworks.rows);
     }
   } catch (error) {
