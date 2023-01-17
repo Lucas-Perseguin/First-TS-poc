@@ -52,3 +52,11 @@ export function setResidentInactive(
     [id]
   );
 }
+
+export function selectUserActitivyById(
+  id: number
+): Promise<QueryResult<ResidentEntity>> {
+  return connection.query(`SELECT "isActive" FROM residents WHERE id = $1;`, [
+    id,
+  ]);
+}

@@ -17,7 +17,7 @@ export async function createResident(
     const createdResident = await insertResident(req.body);
     return res.status(201).send(createdResident.rows[0]);
   } catch (error) {
-    return res.sendStatus(500);
+    return res.status(400).send('Name already in use');
   }
 }
 
