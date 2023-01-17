@@ -33,7 +33,7 @@ export async function getHouseworks(
 ): Promise<Response<HouseworkEntity | HouseworkEntity[]>> {
   const { id, name, date, done, deliveredLate, isLate, today } = req.query;
   let count: number = 0;
-  for (const key in req.params) {
+  for (const key in req.query) {
     count++;
   }
   if (count >= 2)
