@@ -2,12 +2,13 @@ import { Router } from 'express';
 import {
   completeHousework,
   createHousework,
+  editHousework,
   getHouseworks,
   getResidentHouseworks,
 } from '../controllers/houseworks.controller.js';
 import checkResidentActivity from '../middlewares/checkResidentActivity.middleware.js';
 import modelValidation from '../middlewares/validateModel.middleware.js';
-import { HouseworkModel } from '../models/models.js';
+import { HouseworkEditModel, HouseworkModel } from '../models/models.js';
 
 const router = Router();
 
@@ -24,7 +25,11 @@ router.get('/houseworks/:residentId', getResidentHouseworks);
 
 router.post('/houseworks/:houseworkId/complete', completeHousework);
 
-router.patch('houseworks/:houseworkId');
+router.patch(
+  '/houseworks/:houseworkId',
+  modelValidation(HouseworkEditModel),
+  editHousework
+);
 
 router.delete('/houseworks/:houseworkId');
 

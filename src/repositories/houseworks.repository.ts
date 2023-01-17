@@ -3,6 +3,7 @@ import QueryString from 'qs';
 import connection from '../database.js';
 import {
   Housework,
+  HouseworkEdit,
   HouseworkEntity,
 } from '../protocols/houseworks.protocol.js';
 
@@ -177,5 +178,27 @@ export function updateHouseworkCompletion(
     WHERE id = $1
     RETURNING *;`,
     [houseworkId]
+  );
+}
+
+export function updateHouseWork(
+  houseworkId: number,
+  object: HouseworkEdit
+): Promise<QueryResult<HouseworkEntity>> {
+  const { name, description, date, responsible } = object;
+  const arr = ['name', 'description', 'date', 'responsible'];
+  for (const index in arr) {
+    if (!Object.keys(object).includes(arr[index])) object[arr[index]] = null;
+  }
+  return connection.query(
+    `UPDATE houseworks
+    SET
+      name = CASE WHEN $1::text IS NOT NULL THEN $1::text ELSE name END,
+      description = CASE WHEN $2::text IS NOT NULL THEN $2::text ELSE description END,
+      date = CASE WHEN $3::date IS NOT NULL THEN $3::date ELSE date END,
+      responsible = CASE WHEN $4::integer IS NOT NULL THEN $4::integer ELSE responsible END
+    WHERE id = $5
+    RETURNING *;`,
+    [name, description, date, responsible, houseworkId]
   );
 }

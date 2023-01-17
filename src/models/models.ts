@@ -9,3 +9,10 @@ export const HouseworkModel = Joi.object({
   description: Joi.string().required(),
   date: Joi.date().required(),
 });
+
+export const HouseworkEditModel = Joi.object({
+  name: Joi.string().min(5),
+  description: Joi.string(),
+  date: Joi.date(),
+  responsible: Joi.number().min(1),
+});

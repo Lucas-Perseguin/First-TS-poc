@@ -8,4 +8,6 @@ export type HouseworkEntity = {
   completion: Date | null;
 };
 
-export type Housework = Omit<HouseworkEntity, 'id' | 'done' | 'completion'>;
+export type HouseworkEdit = Omit<HouseworkEntity, 'id' | 'done' | 'completion'>;
+
+export type Housework = Omit<HouseworkEdit, 'responsible'>;

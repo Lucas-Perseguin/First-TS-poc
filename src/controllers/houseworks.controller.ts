@@ -17,6 +17,7 @@ import {
   selectResidentLateHouseworks,
   selectResidentTodayHouseworks,
   selectTodayHouseworks,
+  updateHouseWork,
   updateHouseworkCompletion,
 } from '../repositories/houseworks.repository.js';
 
@@ -137,8 +138,23 @@ export async function completeHousework(
   const { houseworkId } = req.params;
   try {
     const housework = await updateHouseworkCompletion(Number(houseworkId));
+    if (housework.rowCount)
+      return res.status(404).send('The specified housework was not found');
     return res.send(housework.rows[0]);
   } catch (error) {
+    return res.sendStatus(500);
+  }
+}
+
+export async function editHousework(
+  req: Request,
+  res: Response
+): Promise<Response<HouseworkEntity>> {
+  const { houseworkId } = req.params;
+  try {
+    const housework = await updateHouseWork(Number(houseworkId), req.body);
+  } catch (error) {
+    console.log(error);
     return res.sendStatus(500);
   }
 }
