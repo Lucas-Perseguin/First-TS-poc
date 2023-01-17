@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   completeHousework,
   createHousework,
+  delteHousework,
   editHousework,
   getHouseworks,
   getResidentHouseworks,
@@ -31,6 +32,6 @@ router.patch(
   editHousework
 );
 
-router.delete('/houseworks/:houseworkId');
+router.delete('/houseworks/:houseworkId', delteHousework);
 
 export default router;

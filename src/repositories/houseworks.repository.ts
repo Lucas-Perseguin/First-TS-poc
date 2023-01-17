@@ -202,3 +202,11 @@ export function updateHouseWork(
     [name, description, date, responsible, houseworkId]
   );
 }
+
+export function deleteHouseWorkQuery(
+  houseworkId: number
+): Promise<QueryResult<HouseworkEntity>> {
+  return connection.query(`DELETE FROM houseworks WHERE id = $1 RETURNING *;`, [
+    houseworkId,
+  ]);
+}

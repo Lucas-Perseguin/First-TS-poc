@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { HouseworkEntity } from '../protocols/houseworks.protocol.js';
 import {
+  deleteHouseWorkQuery,
   insertHousework,
   selectAllHouseworks,
   selectAllResidentHouseworks,
@@ -153,6 +154,24 @@ export async function editHousework(
   const { houseworkId } = req.params;
   try {
     const housework = await updateHouseWork(Number(houseworkId), req.body);
+    if (!housework.rowCount)
+      return res.status(404).send('The specified housework was not found');
+    return res.send(housework.rows[0]);
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+}
+
+export async function delteHousework(
+  req: Request,
+  res: Response
+): Promise<Response<HouseworkEntity>> {
+  const { houseworkId } = req.params;
+  try {
+    const housework = await deleteHouseWorkQuery(Number(houseworkId));
+    if (!housework.rowCount)
+      return res.status(404).send('The specified housework was not found');
+    return res.send(housework.rows[0]);
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
