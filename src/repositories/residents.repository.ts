@@ -60,3 +60,11 @@ export function selectUserActitivyById(
     id,
   ]);
 }
+
+export function deleteResidentQuery(
+  id: number
+): Promise<QueryResult<ResidentEntity>> {
+  return connection.query(`DELETE FROM residents WHERE id = $1 RETURNING *;`, [
+    id,
+  ]);
+}

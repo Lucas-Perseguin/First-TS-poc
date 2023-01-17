@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   createResident,
+  deleteResident,
   getResidents,
   updateResident,
 } from '../controllers/residents.controller.js';
@@ -14,5 +15,7 @@ router.post('/residents', modelValidation(ResidentModel), createResident);
 router.get('/residents', getResidents);
 
 router.patch('/residents/:residentId', updateResident);
+
+router.delete('/residents/:residentId', deleteResident);
 
 export default router;
