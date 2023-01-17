@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
 
 export default function modelValidation(model: Joi.ObjectSchema<any>) {
-  return (req: Request, res: Response, next) => {
+  return (req: Request, res: Response, next: NextFunction) => {
     const { error } = model.validate(req.body, { abortEarly: false });
 
     if (error) {
