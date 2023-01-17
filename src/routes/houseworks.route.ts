@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  completeHousework,
   createHousework,
   getHouseworks,
   getResidentHouseworks,
@@ -21,7 +22,9 @@ router.get('/houseworks', getHouseworks);
 
 router.get('/houseworks/:residentId', getResidentHouseworks);
 
-router.patch('/houseworks/:houseworkId');
+router.post('/houseworks/:houseworkId/complete', completeHousework);
+
+router.patch('houseworks/:houseworkId');
 
 router.delete('/houseworks/:houseworkId');
 

@@ -17,6 +17,7 @@ import {
   selectResidentLateHouseworks,
   selectResidentTodayHouseworks,
   selectTodayHouseworks,
+  updateHouseworkCompletion,
 } from '../repositories/houseworks.repository.js';
 
 export async function createHousework(
@@ -124,6 +125,19 @@ export async function getResidentHouseworks(
       const houserworks = await selectAllResidentHouseworks(Number(residentId));
       return res.send(houserworks.rows);
     }
+  } catch (error) {
+    return res.sendStatus(500);
+  }
+}
+
+export async function completeHousework(
+  req: Request,
+  res: Response
+): Promise<Response<HouseworkEntity>> {
+  const { houseworkId } = req.params;
+  try {
+    const housework = await updateHouseworkCompletion(Number(houseworkId));
+    return res.send(housework.rows[0]);
   } catch (error) {
     return res.sendStatus(500);
   }

@@ -12,7 +12,10 @@ export function insertHousework(
 ): Promise<QueryResult<HouseworkEntity>> {
   const { name, description, date } = object;
   return connection.query(
-    `INSERT INTO houseworks (name, description, date, responsible) VALUES ($1, $2, $3, $4) RETURNING *;`,
+    `INSERT INTO houseworks
+    (name, description, date, responsible)
+    VALUES ($1, $2, $3, $4)
+    RETURNING *;`,
     [name, description, date, residentId]
   );
 }
@@ -164,3 +167,15 @@ export function selectAllResidentHouseworks(
 }
 
 //!End of Select Resident Houseworks ------------------------------------------------------>
+
+export function updateHouseworkCompletion(
+  houseworkId: number
+): Promise<QueryResult<HouseworkEntity>> {
+  return connection.query(
+    `UPDATE houseworks
+    SET done = true, completion = NOW()::date
+    WHERE id = $1
+    RETURNING *;`,
+    [houseworkId]
+  );
+}
