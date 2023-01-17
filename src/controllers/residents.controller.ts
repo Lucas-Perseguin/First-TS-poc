@@ -32,7 +32,7 @@ export async function getResidents(
     (id && isActive) ||
     (name && id && isActive)
   )
-    return res.sendStatus(400);
+    return res.status(400).send('You can only use one query string at a time');
   try {
     if (name) {
       const residents = await selectResidentsByName(name);
