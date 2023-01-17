@@ -6,10 +6,7 @@ import {
   selectAllHouseworks,
   selectAllResidentHouseworks,
   selectDeliveredLateHouseworks,
-  selectHouseworkById,
-  selectHouseworksByDate,
-  selectHouseworksByName,
-  selectHouseworskByDone,
+  selectHouseworks,
   selectLateHouseworks,
   selectResidentDeliveredLateHouseworks,
   selectResidentHouseworksByDate,
@@ -42,39 +39,39 @@ export async function getHouseworks(
   res: Response
 ): Promise<Response<HouseworkEntity | HouseworkEntity[]>> {
   const { id, name, date, done, deliveredLate, isLate, today } = req.query;
-  let count: number = 0;
-  for (const key in req.query) {
-    count++;
-  }
-  if (count >= 2)
-    return res.status(400).send('You can only use one query string at a time');
+
+  if (
+    (isLate && today) ||
+    (isLate && deliveredLate) ||
+    (deliveredLate && today)
+  )
+    return res
+      .status(400)
+      .send('You can only select one between isLate, today and deliveredLate');
+
   try {
-    if (id) {
-      const housework = await selectHouseworkById(id);
-      return res.send(housework.rows[0]);
-    } else if (name) {
-      const houseworks = await selectHouseworksByName(name);
-      return res.send(houseworks.rows);
-    } else if (date) {
-      const houseworks = await selectHouseworksByDate(date);
-      return res.send(houseworks.rows);
-    } else if (done) {
-      const houseworks = await selectHouseworskByDone(done);
-      return res.send(houseworks.rows);
+    if (Object.keys(req.query).length === 0) {
+      const houserworks = await selectAllHouseworks();
+      return res.send(houserworks.rows);
     } else if (isLate) {
-      const houseworks = await selectLateHouseworks();
+      const houseworks = await selectLateHouseworks({ id, name, date });
       return res.send(houseworks.rows);
     } else if (today) {
-      const houseworks = await selectTodayHouseworks();
+      const houseworks = await selectTodayHouseworks({ id, name, done });
       return res.send(houseworks.rows);
     } else if (deliveredLate) {
-      const houserworks = await selectDeliveredLateHouseworks();
+      const houserworks = await selectDeliveredLateHouseworks({
+        id,
+        name,
+        date,
+      });
       return res.send(houserworks.rows);
     } else {
-      const houserworks = await selectAllHouseworks();
+      const houserworks = await selectHouseworks({ id, name, date, done });
       return res.send(houserworks.rows);
     }
   } catch (error) {
+    console.log(error);
     return res.sendStatus(500);
   }
 }

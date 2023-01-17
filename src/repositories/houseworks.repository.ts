@@ -23,64 +23,82 @@ export function insertHousework(
 
 //!Select Houseworks --------------------------------------------------------------------->
 
-export function selectHouseworkById(
-  id: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[]
+export function selectDeliveredLateHouseworks(
+  queries
 ): Promise<QueryResult<HouseworkEntity>> {
-  return connection.query(`SELECT * FROM houseworks WHERE id = $1;`, [
-    Number(id),
-  ]);
-}
-
-export function selectHouseworksByName(
-  name: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[]
-): Promise<QueryResult<HouseworkEntity>> {
-  return connection.query(
-    `SELECT * FROM houseworks WHERE name ILIKE ('%' || $1 || '%');`,
-    [name]
-  );
-}
-
-export function selectHouseworksByDate(
-  date: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[]
-): Promise<QueryResult<HouseworkEntity>> {
-  return connection.query(`SELECT * FROM houseworks WHERE date = $1::date;`, [
-    date,
-  ]);
-}
-
-export function selectHouseworskByDone(
-  done: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[]
-): Promise<QueryResult<HouseworkEntity>> {
-  const completion = done === 'true' ? true : false;
-  return connection.query(`SELECT * FROM houseworks WHERE done = $1;`, [
-    completion,
-  ]);
-}
-
-export function selectDeliveredLateHouseworks(): Promise<
-  QueryResult<HouseworkEntity>
-> {
+  const arr = ['id', 'name', 'date'];
+  for (const index in arr) {
+    if (!Object.keys(queries).includes(arr[index])) queries[arr[index]] = null;
+  }
+  const { id, name, date } = queries;
   return connection.query(
     `SELECT * FROM houseworks
     WHERE completion IS NOT NULL
-    AND completion > date;`
+    AND completion > date
+    AND id = CASE WHEN $1::integer IS NOT NULL THEN $1::integer ELSE id END
+    AND name ILIKE CASE WHEN $2::text IS NOT NULL THEN ('%' || $2::text || '%') ELSE name END
+    AND date = CASE WHEN $3::date IS NOT NULL THEN $3::date ELSE date END;`,
+    [id, name, date]
   );
 }
 
-export function selectLateHouseworks(): Promise<QueryResult<HouseworkEntity>> {
+export function selectLateHouseworks(
+  queries
+): Promise<QueryResult<HouseworkEntity>> {
+  const arr = ['id', 'name', 'date'];
+  for (const index in arr) {
+    if (!Object.keys(queries).includes(arr[index])) queries[arr[index]] = null;
+  }
+  const { id, name, date } = queries;
   return connection.query(
     `SELECT * FROM houseworks
     WHERE completion IS NULL
-    AND NOW()::date > date;`
+    AND NOW()::date > date
+    AND id = CASE WHEN $1::integer IS NOT NULL THEN $1::integer ELSE id END
+    AND name ILIKE CASE WHEN $2::text IS NOT NULL THEN ('%' || $2::text || '%') ELSE name END
+    AND date = CASE WHEN $3::date IS NOT NULL THEN $3::date ELSE date END;`,
+    [id, name, date]
   );
 }
 
-export function selectTodayHouseworks(): Promise<QueryResult<HouseworkEntity>> {
-  return connection.query(`SELECT * FROM houseworks WHERE date = NOW()::date;`);
+export function selectTodayHouseworks(
+  queries
+): Promise<QueryResult<HouseworkEntity>> {
+  const arr = ['id', 'name', 'done'];
+  for (const index in arr) {
+    if (!Object.keys(queries).includes(arr[index])) queries[arr[index]] = null;
+  }
+  const { id, name, done } = queries;
+  return connection.query(
+    `SELECT * FROM houseworks
+    WHERE date = NOW()::date
+    AND id = CASE WHEN $1::integer IS NOT NULL THEN $1::integer ELSE id END
+    AND name ILIKE CASE WHEN $2::text IS NOT NULL THEN ('%' || $2::text || '%') ELSE name END
+    AND done = CASE WHEN $3::boolean IS NOT NULL THEN $3::boolean ELSE done END;`,
+    [id, name, done]
+  );
 }
 
 export function selectAllHouseworks(): Promise<QueryResult<HouseworkEntity>> {
   return connection.query(`SELECT * FROM houseworks;`);
+}
+
+export function selectHouseworks(
+  queries
+): Promise<QueryResult<HouseworkEntity>> {
+  const arr = ['id', 'name', 'date', 'done'];
+  for (const index in arr) {
+    if (!Object.keys(queries).includes(arr[index])) queries[arr[index]] = null;
+  }
+  const { id, name, date, done } = queries;
+  return connection.query(
+    `SELECT * FROM houseworks
+    WHERE done = CASE WHEN $4::boolean IS NOT NULL THEN $4::boolean ELSE done END
+    AND id = CASE WHEN $1::integer IS NOT NULL THEN $1::integer ELSE id END
+    AND name ILIKE CASE WHEN $2::text IS NOT NULL THEN ('%' || $2::text || '%') ELSE name END
+    AND date = CASE WHEN $3::date IS NOT NULL THEN $3::date ELSE date END;`,
+    [id, name, date, done]
+  );
 }
 
 //!End of Select Houseworks -------------------------------------------------------------->
