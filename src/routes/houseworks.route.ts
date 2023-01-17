@@ -1,5 +1,8 @@
 import { Router } from 'express';
-import { createHousework } from '../controllers/houseworks.controller.js';
+import {
+  createHousework,
+  getHouseworks,
+} from '../controllers/houseworks.controller.js';
 import checkResidentActivity from '../middlewares/checkResidentActivity.middleware.js';
 import modelValidation from '../middlewares/validateModel.middleware.js';
 import { HouseworkModel } from '../models/models.js';
@@ -13,7 +16,7 @@ router.post(
   createHousework
 );
 
-router.get('/houseworks');
+router.get('/houseworks', getHouseworks);
 
 router.get('/houserworks/:residentId');
 
