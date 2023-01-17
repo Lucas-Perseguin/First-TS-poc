@@ -9,9 +9,6 @@ import {
   selectHouseworks,
   selectLateHouseworks,
   selectResidentDeliveredLateHouseworks,
-  selectResidentHouseworksByDate,
-  selectResidentHouseworksByName,
-  selectResidentHouseworskByDone,
   selectResidentLateHouseworks,
   selectResidentTodayHouseworks,
   selectTodayHouseworks,
@@ -71,7 +68,6 @@ export async function getHouseworks(
       return res.send(houserworks.rows);
     }
   } catch (error) {
-    console.log(error);
     return res.sendStatus(500);
   }
 }
@@ -81,47 +77,48 @@ export async function getResidentHouseworks(
   res: Response
 ): Promise<Response<HouseworkEntity | HouseworkEntity[]>> {
   const { residentId } = req.params;
-  const { name, date, done, deliveredLate, isLate, today } = req.query;
-  let count: number = 0;
-  for (const key in req.query) {
-    count++;
-  }
-  if (count >= 2)
-    return res.status(400).send('You can only use one query string at a time');
+  const { id, name, date, done, deliveredLate, isLate, today } = req.query;
+
+  if (
+    (isLate && today) ||
+    (isLate && deliveredLate) ||
+    (deliveredLate && today)
+  )
+    return res
+      .status(400)
+      .send('You can only select one between isLate, today and deliveredLate');
+
   try {
-    if (name) {
-      const houseworks = await selectResidentHouseworksByName(
-        name,
-        Number(residentId)
-      );
-      return res.send(houseworks.rows);
-    } else if (date) {
-      const houseworks = await selectResidentHouseworksByDate(
-        date,
-        Number(residentId)
-      );
-      return res.send(houseworks.rows);
-    } else if (done) {
-      const houseworks = await selectResidentHouseworskByDone(
-        done,
-        Number(residentId)
-      );
-      return res.send(houseworks.rows);
+    if (Object.keys(req.query).length === 0) {
+      const houserworks = await selectAllResidentHouseworks(Number(residentId));
+      return res.send(houserworks.rows);
     } else if (isLate) {
-      const houseworks = await selectResidentLateHouseworks(Number(residentId));
+      const houseworks = await selectResidentLateHouseworks(
+        { id, name, date },
+        Number(residentId)
+      );
       return res.send(houseworks.rows);
     } else if (today) {
       const houseworks = await selectResidentTodayHouseworks(
+        { id, name, done },
         Number(residentId)
       );
       return res.send(houseworks.rows);
     } else if (deliveredLate) {
       const houserworks = await selectResidentDeliveredLateHouseworks(
+        {
+          id,
+          name,
+          date,
+        },
         Number(residentId)
       );
       return res.send(houserworks.rows);
     } else {
-      const houserworks = await selectAllResidentHouseworks(Number(residentId));
+      const houserworks = await selectResidentLateHouseworks(
+        { id, name, date, done },
+        Number(residentId)
+      );
       return res.send(houserworks.rows);
     }
   } catch (error) {
