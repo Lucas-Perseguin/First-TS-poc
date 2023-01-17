@@ -5,7 +5,6 @@ import {
   delteHousework,
   editHousework,
   getHouseworks,
-  getResidentHouseworks,
 } from '../controllers/houseworks.controller.js';
 import checkResidentActivity from '../middlewares/checkResidentActivity.middleware.js';
 import modelValidation from '../middlewares/validateModel.middleware.js';
@@ -21,8 +20,6 @@ router.post(
 );
 
 router.get('/houseworks', getHouseworks);
-
-router.get('/houseworks/:residentId', getResidentHouseworks);
 
 router.post('/houseworks/:houseworkId/complete', completeHousework);
 
