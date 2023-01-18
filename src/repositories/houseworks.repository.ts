@@ -1,10 +1,10 @@
 import { QueryResult } from 'pg';
-import QueryString from 'qs';
 import connection from '../database.js';
 import {
   Housework,
   HouseworkEdit,
   HouseworkEntity,
+  Queries,
 } from '../protocols/houseworks.protocol.js';
 
 export function insertHousework(
@@ -24,7 +24,7 @@ export function insertHousework(
 //!Select Houseworks --------------------------------------------------------------------->
 
 export function selectDeliveredLateHouseworks(
-  queries
+  queries: Queries
 ): Promise<QueryResult<HouseworkEntity>> {
   const arr = ['id', 'name', 'date', 'responsible'];
   for (const index in arr) {
@@ -44,7 +44,7 @@ export function selectDeliveredLateHouseworks(
 }
 
 export function selectLateHouseworks(
-  queries
+  queries: Queries
 ): Promise<QueryResult<HouseworkEntity>> {
   const arr = ['id', 'name', 'date', 'responsible'];
   for (const index in arr) {
@@ -64,7 +64,7 @@ export function selectLateHouseworks(
 }
 
 export function selectTodayHouseworks(
-  queries
+  queries: Queries
 ): Promise<QueryResult<HouseworkEntity>> {
   const arr = ['id', 'name', 'done', 'responsible'];
   for (const index in arr) {
@@ -87,7 +87,7 @@ export function selectAllHouseworks(): Promise<QueryResult<HouseworkEntity>> {
 }
 
 export function selectHouseworks(
-  queries
+  queries: Queries
 ): Promise<QueryResult<HouseworkEntity>> {
   const arr = ['id', 'name', 'date', 'done', 'responsible'];
   for (const index in arr) {
