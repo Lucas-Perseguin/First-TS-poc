@@ -1,6 +1,10 @@
 import { QueryResult } from 'pg';
 import connection from '../database.js';
-import { Resident, ResidentEntity } from '../protocols/residents.protocol.js';
+import {
+  Resident,
+  ResidentEntity,
+  ResidentsQueries,
+} from '../protocols/residents.protocol.js';
 import QueryString from 'qs';
 
 export function insertResident(
@@ -12,36 +16,20 @@ export function insertResident(
   );
 }
 
-export function selectResidentsByName(
-  name: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[]
+export function selectResidents(
+  queries: ResidentsQueries
 ): Promise<QueryResult<ResidentEntity | ResidentEntity[]>> {
+  const arr = ['id', 'name', 'isActive'];
+  for (const index in arr) {
+    if (!Object.keys(queries).includes(arr[index])) queries[arr[index]] = null;
+  }
+  const { id, name, isActive } = queries;
   return connection.query(
-    `SELECT * FROM residents WHERE name ILIKE ('%' || $1 || '%');`,
-    [name]
+    `SELECT * FROM residents
+    WHERE id = CASE WHEN $1::integer IS NOT NULL THEN $1::integer ELSE id END
+    AND name ILIKE CASE WHEN $2::text IS NOT NULL THEN ('%' || $2::text || '%') ELSE name END
+    AND "isActive" = CASE WHEN $3::boolean IS NOT NULL THEN $3::boolean ELSE "isActive" END;`
   );
-}
-
-export function selectResidentById(
-  id: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[]
-): Promise<QueryResult<ResidentEntity | ResidentEntity[]>> {
-  return connection.query(`SELECT * FROM residents WHERE id = $1;`, [
-    Number(id),
-  ]);
-}
-
-export function selectResidentsByActivity(
-  isActive: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[]
-): Promise<QueryResult<ResidentEntity | ResidentEntity[]>> {
-  const activity = isActive === 'true' ? true : false;
-  return connection.query(`SELECT * FROM residents WHERE "isActive" = $1;`, [
-    activity,
-  ]);
-}
-
-export function selectAllResidents(): Promise<
-  QueryResult<ResidentEntity | ResidentEntity[]>
-> {
-  return connection.query(`SELECT * FROM residents;`);
 }
 
 export function setResidentInactive(

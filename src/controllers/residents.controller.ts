@@ -2,10 +2,7 @@ import { Request, Response } from 'express';
 import { ResidentEntity } from '../protocols/residents.protocol.js';
 import {
   insertResident,
-  selectResidentsByName,
-  selectResidentById,
-  selectResidentsByActivity,
-  selectAllResidents,
+  selectResidents,
   setResidentInactive,
   deleteResidentQuery,
 } from '../repositories/residents.repository.js';
@@ -27,27 +24,9 @@ export async function getResidents(
   res: Response
 ): Promise<Response<ResidentEntity | ResidentEntity[]>> {
   const { name, id, isActive } = req.query;
-  if (
-    (name && id) ||
-    (name && isActive) ||
-    (id && isActive) ||
-    (name && id && isActive)
-  )
-    return res.status(400).send('You can only use one query string at a time');
   try {
-    if (name) {
-      const residents = await selectResidentsByName(name);
-      return res.send(residents.rows);
-    } else if (id) {
-      const residents = await selectResidentById(id);
-      return res.send(residents.rows);
-    } else if (isActive) {
-      const residents = await selectResidentsByActivity(isActive);
-      return res.send(residents.rows);
-    } else {
-      const residents = await selectAllResidents();
-      return res.send(residents.rows);
-    }
+    const residents = await selectResidents({ name, id, isActive });
+    return res.send(residents.rows);
   } catch (error) {
     return res.sendStatus(500);
   }
