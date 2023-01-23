@@ -5,7 +5,6 @@ import {
   ResidentEntity,
   ResidentsQueries,
 } from '../protocols/residents.protocol.js';
-import QueryString from 'qs';
 
 export function insertResident(
   object: Resident
@@ -28,7 +27,8 @@ export function selectResidents(
     `SELECT * FROM residents
     WHERE id = CASE WHEN $1::integer IS NOT NULL THEN $1::integer ELSE id END
     AND name ILIKE CASE WHEN $2::text IS NOT NULL THEN ('%' || $2::text || '%') ELSE name END
-    AND "isActive" = CASE WHEN $3::boolean IS NOT NULL THEN $3::boolean ELSE "isActive" END;`
+    AND "isActive" = CASE WHEN $3::boolean IS NOT NULL THEN $3::boolean ELSE "isActive" END;`,
+    [id, name, isActive]
   );
 }
 
