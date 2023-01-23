@@ -14,7 +14,7 @@ export type HouseworkEdit = Omit<HouseworkEntity, 'id' | 'done' | 'completion'>;
 
 export type Housework = Omit<HouseworkEdit, 'responsible'>;
 
-export type Queries = {
+export type HouseworksQueries = {
   id?: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[];
   name?: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[];
   date?: string | string[] | QueryString.ParsedQs | QueryString.ParsedQs[];

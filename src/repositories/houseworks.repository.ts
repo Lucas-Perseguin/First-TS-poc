@@ -4,7 +4,7 @@ import {
   Housework,
   HouseworkEdit,
   HouseworkEntity,
-  Queries,
+  HouseworksQueries,
 } from '../protocols/houseworks.protocol.js';
 
 export function insertHousework(
@@ -24,7 +24,7 @@ export function insertHousework(
 //!Select Houseworks --------------------------------------------------------------------->
 
 export function selectDeliveredLateHouseworks(
-  queries: Queries
+  queries: HouseworksQueries
 ): Promise<QueryResult<HouseworkEntity>> {
   const arr = ['id', 'name', 'date', 'responsible'];
   for (const index in arr) {
@@ -44,7 +44,7 @@ export function selectDeliveredLateHouseworks(
 }
 
 export function selectLateHouseworks(
-  queries: Queries
+  queries: HouseworksQueries
 ): Promise<QueryResult<HouseworkEntity>> {
   const arr = ['id', 'name', 'date', 'responsible'];
   for (const index in arr) {
@@ -64,7 +64,7 @@ export function selectLateHouseworks(
 }
 
 export function selectTodayHouseworks(
-  queries: Queries
+  queries: HouseworksQueries
 ): Promise<QueryResult<HouseworkEntity>> {
   const arr = ['id', 'name', 'done', 'responsible'];
   for (const index in arr) {
@@ -87,7 +87,7 @@ export function selectAllHouseworks(): Promise<QueryResult<HouseworkEntity>> {
 }
 
 export function selectHouseworks(
-  queries: Queries
+  queries: HouseworksQueries
 ): Promise<QueryResult<HouseworkEntity>> {
   const arr = ['id', 'name', 'date', 'done', 'responsible'];
   for (const index in arr) {
